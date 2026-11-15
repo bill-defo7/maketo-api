@@ -15,6 +15,7 @@ import com.maketo.credit.entity.TransactionCredit;
 import com.maketo.credit.fournisseur.DemandePaiement;
 import com.maketo.credit.fournisseur.EtatPaiementFournisseur;
 import com.maketo.credit.fournisseur.FournisseurPaiement;
+import com.maketo.credit.fournisseur.OperateurPaiement;
 import com.maketo.credit.fournisseur.ResultatPaiement;
 import com.maketo.credit.repository.PaiementRepository;
 import com.maketo.credit.repository.TransactionCreditRepository;
@@ -99,7 +100,11 @@ public class PaiementServiceImpl implements PaiementService {
             throw new MetierException("Ce montant de recharge n'est pas proposé");
         }
         String telephone = TelephoneUtils.normaliser(r.telephone());
-        String operateur = r.operateur().trim().toUpperCase();
+        String operateur = fournisseur.operateurs().stream()
+                .map(OperateurPaiement::cle)
+                .filter(cle -> cle.equalsIgnoreCase(r.operateur().trim()))
+                .findFirst()
+                .orElseThrow(() -> new MetierException("Opérateur de paiement indisponible"));
 
         // 1. Enregistrement (validé tout de suite : le webhook doit pouvoir retrouver le paiement)
         Long paiementId = transaction.execute(statut -> enregistrer(utilisateurId, operateur, telephone, r.montant()));
