@@ -37,3 +37,5 @@ application-dev.yaml
 
 ### Photos stockées en local ###
 uploads/
+
+.env

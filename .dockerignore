@@ -1,0 +1,6 @@
+target/
+uploads/
+.git/
+.idea/
+.env
+src/main/resources/application-dev.yaml
